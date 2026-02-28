@@ -33,32 +33,32 @@ Internet → IGW → Web Tier (Public) → NAT GW → App Tier (Private)
 ---
 ```mermaid
 flowchart TD
-    Internet(["🌐 Internet"])
+    Internet(["Internet"])
 
-    subgraph VPC["VPC: my-3tier-vpc — 10.0.0.0/16 — us-east-1a"]
-        direction TD
+    subgraph VPC["VPC: my-3tier-vpc  10.0.0.0/16  us-east-1a"]
 
-        subgraph Tier1["TIER 1 — Web Tier — Public Subnet 10.0.1.0/24"]
-            IGW["🔌 IGW: my-igw"]
-            WEB["🖥️ Web-Server\nPublic: 34.237.136.192\nPrivate: 10.0.1.234"]
-            NAT["🔁 NAT GW: my-nat-gw\nElastic IP attached"]
+        subgraph Tier1["TIER 1 - Web Tier - Public Subnet 10.0.1.0/24"]
+            IGW["IGW: my-igw"]
+            WEB["Web-Server\nPublic: 34.237.136.192\nPrivate: 10.0.1.234"]
+            NAT["NAT GW: my-nat-gw\nElastic IP attached"]
         end
 
-        subgraph Tier2["TIER 2 — App Tier — Private Subnet 10.0.2.0/24"]
-            APP["🖥️ App-Server\nPrivate: 10.0.2.128\n✅ Outbound via NAT"]
+        subgraph Tier2["TIER 2 - App Tier - Private Subnet 10.0.2.0/24"]
+            APP["App-Server\nPrivate: 10.0.2.128\nOutbound via NAT only"]
         end
 
-        subgraph Tier3["TIER 3 — DB Tier — Private Subnet 10.0.3.0/24"]
-            DB["🖥️ DB-Server\nPrivate: 10.0.3.82\n❌ No Internet Access"]
+        subgraph Tier3["TIER 3 - DB Tier - Private Subnet 10.0.3.0/24"]
+            DB["DB-Server\nPrivate: 10.0.3.82\nNo Internet Access"]
         end
+
     end
 
-    Internet -->|"HTTP / SSH"| IGW
+    Internet -->|HTTP/SSH| IGW
     IGW --> WEB
-    WEB -->|"SSH Tunnel"| APP
-    APP -->|"Outbound via NAT"| NAT
-    NAT -->|"Outbound Only"| Internet
-    APP -.->|"Internal Only"| DB
+    WEB -->|SSH Tunnel| APP
+    APP -->|Outbound via NAT| NAT
+    NAT -->|Outbound Only| Internet
+    APP -.->|Internal Only| DB
 ```
 
 ## Resources Created

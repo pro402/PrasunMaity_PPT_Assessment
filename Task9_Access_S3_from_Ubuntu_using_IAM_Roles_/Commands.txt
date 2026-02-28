@@ -1,0 +1,9 @@
+# Step 1 - install AWS CLI (if not present)
+sudo apt update
+sudo apt install awscli -y
+
+# Step 2 - verify identity (should show the role, not a user)
+aws sts get-caller-identity
+
+# Step 3 - list all S3 buckets
+aws s3 ls

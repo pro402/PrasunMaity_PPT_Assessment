@@ -5,7 +5,7 @@ Configured Cross-Region Replication (CRR) between two S3 buckets across differen
 ---
 
 ## Project Structure
-
+```
 .
 ├── README.md
 └── Screenshots
@@ -15,7 +15,7 @@ Configured Cross-Region Replication (CRR) between two S3 buckets across differen
     ├── 04_Destination_Bucket_Replicated.png
     ├── 05_Lifecycle_Rule_Preview.png
     └── 06_Lifecycle_Rule_Enabled.png
-
+```
 ---
 
 ## Bucket Details

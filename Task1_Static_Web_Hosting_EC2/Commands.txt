@@ -1,0 +1,6 @@
+sudo apt update
+sudo apt install nginx -y
+sudo apt install zip unzip -y
+wget -O webpage.zip https://templatemo.com/download/templatemo_607_glass_admin
+unzip webpage.zip
+sudo cp -r templatemo_607_glass_admin/. /var/www/html/

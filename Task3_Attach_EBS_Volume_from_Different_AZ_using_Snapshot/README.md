@@ -1,9 +1,5 @@
 # EBS Disk Partitioning & Cross-AZ Migration
 
-Partitioned an EBS volume on an EC2 instance in **us-east-1a**, wrote a file, then migrated the data to **us-east-1b** via snapshot and verified the file was intact.
-
----
-
 ## Project Structure
 ```
 .
@@ -13,59 +9,21 @@ Partitioned an EBS volume on an EC2 instance in **us-east-1a**, wrote a file, th
     ├── 02_Attach_Volume_1b_Console.png
     └── 03_Terminal_1b_File_Verified.png
 ```
----
 
 ## What Was Done
-
-### Step 1 — Partition & Write (us-east-1a)
-
-```bash
-sudo lsblk
-sudo fdisk /dev/nvme1n1          # created partition nvme1n1p1
-sudo mkfs.ext4 /dev/nvme1n1p1
-sudo mkdir /mnt/mypartition
-sudo mount /dev/nvme1n1p1 /mnt/mypartition
-sudo nano /mnt/mypartition/text.txt
-# Content: "Hello i am in AZ us-east-1a"
-```
-
-### Step 2 — Snapshot (AWS Console)
-
-- Selected the 10 GiB volume → **Actions → Create Snapshot**
-- Waited for status: `pending` → `completed`
-
-### Step 3 — New Volume in us-east-1b (AWS Console)
-
-- Snapshot → **Create Volume from Snapshot** → AZ set to `us-east-1b`
-- Attached the new volume to instance `Ubuntu_AZ_US_1b` at `/dev/sdd`
-
-### Step 4 — Mount & Verify (us-east-1b)
-
-```bash
-lsblk
-sudo mkdir /mnt/mypartition
-sudo mount /dev/nvme1n1p1 /mnt/mypartition
-cd /mnt/mypartition/
-ls                 # lost+found  text.txt
-cat text.txt       # Hello i am in AZ us-east-1a ✓
-```
-
----
+1. Attached a 10 GiB EBS volume to EC2 in us-east-1a; partitioned with `fdisk /dev/nvme1n1`, formatted with `mkfs.ext4`
+2. Mounted at `/mnt/mypartition` and wrote `text.txt` with content: `"Hello i am in AZ us-east-1a"`
+3. Created snapshot of the 10 GiB volume via **Actions → Create Snapshot**; waited for `pending → completed`
+4. Created new EBS volume from snapshot in **us-east-1b**; attached to instance `Ubuntu_AZ_US_1b` at `/dev/sdd`
+5. On us-east-1b instance: mounted `/dev/nvme1n1p1` → ran `cat text.txt` → content intact ✅
+6. Confirmed EBS snapshots enable data migration across Availability Zones
 
 ## Screenshots
-
-### EC2 Instance (us-east-1a) — Volume Attached
+### 01 — EC2 Instance (us-east-1a) — Volume Attached
 ![EC2 1a Volume Attached](Screenshots/01_EC2_1a_Volume_Attached.png)
 
-### Attaching Snapshot Volume to us-east-1b
+### 02 — Attaching Snapshot Volume to us-east-1b
 ![Attach Volume Console](Screenshots/02_Attach_Volume_1b_Console.png)
 
-### File Verified on us-east-1b
+### 03 — File Verified on us-east-1b
 ![Terminal Verification](Screenshots/03_Terminal_1b_File_Verified.png)
-
----
-
-## Result
-
-`text.txt` written in `us-east-1a` was successfully read in `us-east-1b`, confirming data persistence across Availability Zones via EBS snapshot.
-
